@@ -129,14 +129,14 @@ export function findClassListsInHtmlRange(
   range?: Range
 ): DocumentClassList[] {
   const text = doc.getText(range)
-  const matches = findAll(/(?:\b|:)class(?:Name)?=['"`{]/g, text)
+  const matches = findAll(/(?:\b|:|def)class(?:Name|ified)?(?:=| |(.*?))['"`{]/gs, text)
   const result: DocumentClassList[] = []
 
   matches.forEach((match) => {
     const subtext = text.substr(match.index + match[0].length - 1)
 
     let lexer =
-      match[0][0] === ':'
+      isVueDoc(doc) && match[0][0] === ':'
         ? getComputedClassAttributeLexer()
         : getClassAttributeLexer()
     lexer.reset(subtext)
